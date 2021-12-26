@@ -1,14 +1,16 @@
 package pkg;
 
 import org.slf4j.Logger;
-import org.tensorflow.Graph;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Tensor;
 import org.tensorflow.TensorFlow;
 import org.tensorflow.ndarray.Shape;
 import org.tensorflow.ndarray.StdArrays;
+import org.tensorflow.ndarray.buffer.IntDataBuffer;
+import org.tensorflow.ndarray.impl.buffer.nio.NioDataBufferFactory;
 import org.tensorflow.types.TInt32;
 
+import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -42,6 +44,11 @@ public class ModelLoader {
                 .run().get(0);
 
         logger.info("ret : {}", tensor.asRawTensor());
+        TInt32 result = (TInt32) tensor;
+        int returnValue[] = new int[8];
+        IntDataBuffer intDataBuffer = NioDataBufferFactory.create(IntBuffer.wrap(returnValue));
+        result.read(intDataBuffer);
+        logger.info("ret: {}", returnValue);
     }
 
     public static void main(String[] args) {
